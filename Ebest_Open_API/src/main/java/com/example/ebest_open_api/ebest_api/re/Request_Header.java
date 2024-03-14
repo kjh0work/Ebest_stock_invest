@@ -12,7 +12,6 @@ public class Request_Header {
 
     private Map<String, String> headers = new HashMap<>();
 
-
     public Request_Header(){
         this.headers.put("content-type", MediaType.APPLICATION_JSON_VALUE);
         this.headers.put("authorization", ""); //이걸 좀 연동을 해야..

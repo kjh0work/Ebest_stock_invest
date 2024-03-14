@@ -2,6 +2,7 @@ package com.example.ebest_open_api.ebest_api;
 
 import com.example.ebest_open_api.ebest_api.re.T1301_response;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,6 +23,18 @@ public class ApiController {
                 return apiService.t1301(accessToken);
             } catch (JsonProcessingException e) {
                 System.out.println("json 변환 실패");
+                throw new RuntimeException(e);
+            }
+        });
+    }
+
+    @GetMapping("/buy")
+    @ResponseBody
+    public Mono<String> BuyStock(){
+        return apiService.getAccessToken().flatMap(accessToken -> {
+            try {
+                return apiService.CSPAT00601(accessToken);
+            } catch (JsonProcessingException e) {
                 throw new RuntimeException(e);
             }
         });

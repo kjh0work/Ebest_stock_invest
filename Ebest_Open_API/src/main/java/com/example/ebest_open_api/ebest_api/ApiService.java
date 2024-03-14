@@ -1,9 +1,6 @@
 package com.example.ebest_open_api.ebest_api;
 
-import com.example.ebest_open_api.ebest_api.re.CDPCQ04700_request;
-import com.example.ebest_open_api.ebest_api.re.Request_Header;
-import com.example.ebest_open_api.ebest_api.re.T1301_request;
-import com.example.ebest_open_api.ebest_api.re.T1301_response;
+import com.example.ebest_open_api.ebest_api.re.*;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.json.JSONObject;
@@ -50,7 +47,38 @@ public class ApiService {
                 .bodyToMono(AccessToken.class);
     }
 
+    public Mono<String> CSPAT00601(AccessToken accessToken) throws JsonProcessingException {
 
+        WebClient.RequestBodySpec requestBodySpec = this.webClient
+                .post().uri("/stock/order");
+
+        Request_Header header = new Request_Header();
+        Map<String, String> headers = header.getHeaders();
+        headers.put("authorization", "Bearer "+accessToken.getAccess_token());
+        headers.put("tr_cd","CSPAT00601");
+        headers.forEach(requestBodySpec::header);
+
+
+        Stock_order_request.CSPAT00601InBlock1 CSPAT00601InBlock1 = Stock_order_request.CSPAT00601InBlock1.builder()
+                .IsuNo("001390") //KG케미칼
+                .OrdQty(1)
+                .OrdPrc(6050)
+                .BnsTpCode("2")
+                .OrdprcPtnCode("00")
+                .MgntrnCode("000")
+                .LoanDt("")
+                .OrdCndiTpCode("0")
+                .build();
+
+        Map<String, Object> wrapMap = new HashMap<>();
+        wrapMap.put("CSPAT00601InBlock1", CSPAT00601InBlock1);
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        String json = objectMapper.writeValueAsString(wrapMap);
+
+        return requestBodySpec.body(BodyInserters.fromValue(json)).retrieve().bodyToMono(String.class);
+
+    }
 
 
     //주식시간대별 체결(t1301) 조회 (접근 토큰 이용해보는 연습)
